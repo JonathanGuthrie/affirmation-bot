@@ -138,6 +138,7 @@ int main(int argc, char **argv) {
 
     s = new JabberBotSession(*host, port, start_encrypted, *userid, *password, *resource, *email, *apath, *dbpath);
     s->RunSession();
+    delete s;
   }
   return EXIT_SUCCESS;
 }
