@@ -1,0 +1,51 @@
+done) Create project
+
+done)  Open socket to server
+
+done)  Start unencrypted session
+
+done)  Start encrypted session
+
+done)  Limit the ciphers to SSL3 and TLS1
+
+done)  Add threading support for the OpenSSL library
+
+done)  Rework the transmit and receive logic to something sane, include the retry requirements, thrown exceptions, etc
+
+done)  Authenticate a session
+
+done)  Register the bot user
+
+done)  Create an echo server
+
+done)  Parsing and response to commands
+
+done)  Periodic commands when a user is logged on
+
+done)  Handle signals to exit properly
+
+done)  Daemonize
+
+15)  End memory leaks
+
+done)  Send out the affirmations once per day
+
+done)  database interface
+
+18) Use the jabber-bot library I've been working on
+
+19) Syslog logging
+
+20) Trap the bdb exceptions (to be logged)
+
+21) Configuration (paths to subscription database, affirmations, passwords, debug state
+    etc.)
+
+22) Better packaging and easier installation
+
+23)  Send the help text to a new user when they add a buddy
+
+24)  Stop busy waiting (use main loop to look for chances to sleep longer than
+   1 second.)
+
+25)  Other stuff I think of
