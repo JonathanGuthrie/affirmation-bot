@@ -120,8 +120,8 @@ void JabberBotSession::Subscribe(const std::string *from, MessageStanza::Message
   std::string account_id, resource;
   split_identifier(from, account_id, resource);
   char keyValue[account_id.size()+1];
-  keyValue[account_id.size()] = '\0';
   account_id.copy(keyValue, std::string::npos);
+  keyValue[account_id.size()] = '\0';
   time_t last = 0;
 
   Dbt key(keyValue, account_id.size()+1);
@@ -149,6 +149,7 @@ void JabberBotSession::Unsubscribe(const std::string *from, MessageStanza::Messa
   split_identifier(from, account_id, resource);
   char keyValue[account_id.size()+1];
   account_id.copy(keyValue, std::string::npos);
+  keyValue[account_id.size()] = '\0';
 
   Dbt key(keyValue, account_id.size()+1);
   m_subscriptionDb.del(NULL, &key, 0);
@@ -177,6 +178,7 @@ void JabberBotSession::Status(const std::string *from, MessageStanza::MessageTyp
   split_identifier(from, account_id, resource);
   char keyValue[account_id.size()+1];
   account_id.copy(keyValue, std::string::npos);
+  keyValue[account_id.size()] = '\0';
   time_t last = 0;
 
   Dbt key(keyValue, account_id.size()+1);
