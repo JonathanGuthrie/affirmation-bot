@@ -120,6 +120,7 @@ void JabberBotSession::Subscribe(const std::string *from, MessageStanza::Message
   std::string account_id, resource;
   split_identifier(from, account_id, resource);
   char keyValue[account_id.size()+1];
+  keyValue[account_id.size()] = '\0';
   account_id.copy(keyValue, std::string::npos);
   time_t last = 0;
 
@@ -379,7 +380,7 @@ void JabberBotSession::RunSession(void) {
 	  std::string user((char *)key.get_data());
 	  time_t t1 = random() % 43200;
 	  time_t t2 = random() % 43200;
-	
+
 	  Upcoming newEntry(user, bod + t1 + t2);
 	  m_upcomingQueue.push(newEntry);
 	}
