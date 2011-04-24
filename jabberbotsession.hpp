@@ -16,10 +16,6 @@ typedef struct {
   void (JabberBotSession::*method)(const std::string *from, MessageStanza::MessageTypes type, const std::string *id);
 } CommandHandler;
 
-class Upcoming;
-
-typedef std::vector<Upcoming> UpcomingList;
-
 class Upcoming {
 private:
   std::string m_user;
@@ -27,15 +23,16 @@ private:
 
 public:
   Upcoming(std::string user, time_t next)  : m_user(user), m_next(next) {}
-  friend class UpcomingCompare;
-  const std::string GetUser(void) const { return m_user; }
-  const time_t GetNext(void) const { return m_next; }
+  const std::string User(void) const { return m_user; }
+  const time_t Next(void) const { return m_next; }
 };
+
+typedef std::vector<Upcoming> UpcomingList;
 
 class UpcomingCompare {
 public :
   bool operator()( const Upcoming &a, const Upcoming &b ) {
-    return a.m_next < b.m_next;
+    return a.Next() > b.Next();
   }
 };
 

@@ -356,9 +356,9 @@ void JabberBotSession::RunSession(void) {
 
   while(m_continueRunning) {
     time_t now = time(NULL);
-    while (!m_upcomingQueue.empty() && (now > m_upcomingQueue.top().GetNext())) {
-      // std::cout << "Appending " << m_upcomingQueue.top().GetUser() << " to the list of people who get messages now" << std::endl;
-      m_sendList.insert(m_upcomingQueue.top().GetUser());
+    while (!m_upcomingQueue.empty() && (now > m_upcomingQueue.top().Next())) {
+      // std::cout << "Appending " << m_upcomingQueue.top().User() << " to the list of people who get messages now" << std::endl;
+      m_sendList.insert(m_upcomingQueue.top().User());
       m_upcomingQueue.pop();
     }
     ProcessSendList();
