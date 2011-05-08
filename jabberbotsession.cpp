@@ -317,10 +317,10 @@ JabberBotSession::~JabberBotSession(void) {
 void JabberBotSession::ProcessSendList(void) {
   bool updated = false;
   for (SendList::iterator i=m_sendList.begin(); i != m_sendList.end(); ++i) {
-    updated = true;
-    AffirmationList::size_type which = random() % m_affirmations.size();
     UserStatusType::iterator j =  m_userStatuses.find(*i);
     if (j != m_userStatuses.end()) {
+      AffirmationList::size_type which = random() % m_affirmations.size();
+      updated = true;
       if (!j->second.empty()) {
 	for (ResourceSet::iterator k=j->second.begin(); k != j->second.end(); ++k) {
 	  std::ostringstream to;
@@ -340,23 +340,23 @@ void JabberBotSession::ProcessSendList(void) {
 	std::ostringstream ss;
 	ss << m_id;
 	m_id++;
-	
-	  MessageStanza message;
-	  message.Type(MessageStanza::Normal);
-	  message.To(*i);
-	  message.Body(m_affirmations[which]);
-	  m_session->SendMessage(message, false);
-      }
-    }
-    time_t now = time(NULL);
-    char keyValue[i->size()+1];
-    i->copy(keyValue, std::string::npos);
-    keyValue[i->size()] = '\0';
-    Dbt key(keyValue, i->size()+1);
-    Dbt data(&now, sizeof(time_t));
-    m_subscriptionDb.put(NULL, &key, &data, 0);
 
-    m_sendList.erase(i);
+	MessageStanza message;
+	message.Type(MessageStanza::Normal);
+	message.To(*i);
+	message.Body(m_affirmations[which]);
+	m_session->SendMessage(message, false);
+      }
+      time_t now = time(NULL);
+      char keyValue[i->size()+1];
+      i->copy(keyValue, std::string::npos);
+      keyValue[i->size()] = '\0';
+      Dbt key(keyValue, i->size()+1);
+      Dbt data(&now, sizeof(time_t));
+      m_subscriptionDb.put(NULL, &key, &data, 0);
+
+      m_sendList.erase(i);
+    }
   }
   if (updated) {
     m_subscriptionDb.sync(0);
