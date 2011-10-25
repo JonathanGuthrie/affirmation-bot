@@ -90,6 +90,9 @@ void JabberBotSession::SetUnavailable(const std::string *from) {
 int JabberBotSession::HandlePresenceRequest(void *context, const PresenceStanza &request, class JabberSession *session) {
   JabberBotSession *bot = static_cast<JabberBotSession *>(context);
 
+  std::ostringstream message;
+  message << "User " << request.From() << " got a presence request of type " << (int) request.Type();
+  syslog(LOG_INFO, message.str().c_str());
   switch(request.Type()) {
     case PresenceStanza::Subscribe:
       bot->SetPresence(PresenceStanza::Subscribed, request.From());
@@ -228,7 +231,7 @@ void JabberBotSession::DefaultCommand(const std::string *from, MessageStanza::Me
   message.Type(type);
   message.To(from);
   message.Thread(id);
-  message.Body("I know how to do these things:\nsubscribe - send affirmation to you once per day\nunsubscribe - stop sending you daily affirmations\nstatus - tell you whether or not you're subscribed\naffirmation - send a random affirmation right now\nhelp - send this message\n\nCommands are case sensitive");
+  message.Body("I know how to do these things:\nsubscribe - send affirmation to you once per day\nunsubscribe - stop sending you daily affirmations\nstatus - tell you whether or not you're subscribed\naffirmation - send a random affirmation right now\nhelp - send this message\n\nCommands are not case sensitive");
   m_session->SendMessage(message, false);
 }
 
