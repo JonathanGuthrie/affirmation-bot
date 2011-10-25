@@ -25,6 +25,8 @@
 
 #include <db_cxx.h>
 
+#include "insensitive.hpp"
+
 class JabberBotSession;
 
 typedef struct {
@@ -51,7 +53,7 @@ public :
   }
 };
 
-typedef std::map<std::string, CommandHandler> CommandHandlerMap;
+typedef std::map<insensitiveString, CommandHandler> CommandHandlerMap;
 typedef std::vector<std::string> AffirmationList;
 typedef std::set<std::string> ResourceSet;
 typedef std::map<std::string, ResourceSet> UserStatusType;

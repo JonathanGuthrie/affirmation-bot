@@ -20,6 +20,8 @@
 #include <cstdlib>
 #include <sstream>
 
+#include <syslog.h>
+
 static void split_identifier(const std::string *from, std::string &account_id, std::string &resource) {
   size_t sep = from->find_first_of('/');
   if (sep != std::string::npos) {
@@ -51,7 +53,9 @@ void JabberBotSession::SetAvailable(const std::string *from) {
       i->second.insert(resource);
     }
   }
-  // std::cout << "Account " << account_id << " has become available at resource " << resource << std::endl;
+  std::ostringstream message;
+  message << "Account " << account_id << " has become available at resource " << resource << std::endl;
+  syslog(LOG_INFO, message.str().c_str());
 }
 
 
@@ -59,7 +63,9 @@ void JabberBotSession::SetUnavailable(const std::string *from) {
   // Split the string into username/resource
   std::string account_id, resource;
   split_identifier(from, account_id, resource);
-  // std::cout << "Account " << account_id << " has become unavailable at resource " << resource << std::endl;
+  std::ostringstream message;
+  message << "Account " << account_id << " has become unavailable at resource " << resource << std::endl;
+  syslog(LOG_INFO, message.str().c_str());
   UserStatusType::iterator i =  m_userStatuses.find(account_id);
   if (i != m_userStatuses.end()) {
     if ("" == resource) {
@@ -119,7 +125,8 @@ int JabberBotSession::HandleMessageRequest(void *context, const MessageStanza &r
   // would just confuse it.
   if ((NULL != request.From()) && (std::string::npos != request.From()->find_first_of('@'))) {
     if (NULL != request.Body()) {
-      CommandHandlerMap::iterator h = bot->m_handlers.find(*request.Body());
+      insensitiveString body(request.Body()->c_str());
+      CommandHandlerMap::iterator h = bot->m_handlers.find(body);
       if (h != bot->m_handlers.end()) {
 	(bot->*h->second.method)(request.From(), request.Type(), request.Id());
       }
@@ -229,6 +236,8 @@ CommandHandlerMap JabberBotSession::m_handlers;
 AffirmationList JabberBotSession::m_affirmations;
 
 JabberBotSession::JabberBotSession(const std::string &host, unsigned short port, bool isSecure, const std::string &userid, const std::string &password, const std::string &resource, const std::string &email, const std::string &affirmation_path, const std::string &db_path) : m_subscriptionDb(NULL, 0) {
+  openlog("affirmations-bot", LOG_PID|LOG_CONS, LOG_DAEMON);
+
   Dbc *cursor;
   m_subscriptionDb.open(NULL, db_path.c_str(), NULL, DB_BTREE, DB_CREATE, 0);
 
@@ -250,7 +259,9 @@ JabberBotSession::JabberBotSession(const std::string &host, unsigned short port,
 	Upcoming newEntry(user, now + t1 + t2);
 	m_upcomingQueue.push(newEntry);
       }
-      // std::cout << "User " << user << " last got an affirmation at " << last << std::endl;
+      std::ostringstream message;
+      message << "User " << user << " last got an affirmation at " << last;
+      syslog(LOG_NOTICE, message.str().c_str());
     }
     cursor->close();
   }
@@ -271,8 +282,10 @@ JabberBotSession::JabberBotSession(const std::string &host, unsigned short port,
     std::string line;
 
     std::ifstream a(affirmation_path.c_str());
-    while (getline(a, line)) {
-      // std::cout << "The line is \"" << line << "\"" << std::endl;
+    while (getline(a, line)) { 
+      std::ostringstream message;
+      message << "The line is \"" << line << "\"" << std::endl;
+      syslog(LOG_DEBUG, message.str().c_str());
       m_affirmations.push_back(line);
     }
   }
@@ -284,21 +297,28 @@ JabberBotSession::JabberBotSession(const std::string &host, unsigned short port,
   m_session->Register(this, HandleMessageRequest);
   JabberIqAuth login_stanza(userid, password, resource);
   const Stanza *response = m_session->SendMessage(login_stanza, true);
-  // std::cout << "The first login response is " << *(response->render(NULL)) << std::endl;
+  std::ostringstream message;
+  message << "The first login response is " << *(response->render(NULL)) << std::endl;
+  syslog(LOG_DEBUG, message.str().c_str());
   if (200 != response->Error()) {
-    // std::cout << "The first login response is " << response->ErrorMessage() << std::endl;
+    message << "The first login response is " << response->ErrorMessage() << std::endl;
+    syslog(LOG_NOTICE, message.str().c_str());
     JabberIqRegister register_stanza(userid, password, email);
     response = m_session->SendMessage(register_stanza, true);
-    // std::cout << "The register response is " << *(response->render(NULL)) << std::endl;
+    message << "The register response is " << *(response->render(NULL)) << std::endl;
+    syslog(LOG_NOTICE, message.str().c_str());
     if (200 != response->Error()) {
-      // std::cout << "The register response is " << response->ErrorMessage() << std::endl;
+      message << "The register response is " << response->ErrorMessage() << std::endl;
+      syslog(LOG_NOTICE, message.str().c_str());
     }
     else {
       JabberIqAuth login2_stanza(userid, password, resource);
       response = m_session->SendMessage(login2_stanza, true);
-      // std::cout << "The second login response is " << *(response->render(NULL)) << std::endl;
+      message << "The second login response is " << *(response->render(NULL)) << std::endl;
+      syslog(LOG_NOTICE, message.str().c_str());
       if (200 != response->Error()) {
-	// std::cout << "The second login failed with a message of " << response->ErrorMessage() << std::endl;
+	message << "The second login failed with a message of " << response->ErrorMessage() << std::endl;
+	syslog(LOG_NOTICE, message.str().c_str());
       }
     }
   }
@@ -309,7 +329,9 @@ JabberBotSession::JabberBotSession(const std::string &host, unsigned short port,
 }
 
 JabberBotSession::~JabberBotSession(void) {
-  // std::cout << "Shutting down cleanly" << std::endl;
+  std::ostringstream message;
+  message << "Shutting down cleanly" << std::endl;
+  syslog(LOG_NOTICE, message.str().c_str());
   m_subscriptionDb.close(0);
 }
 
@@ -372,7 +394,9 @@ void JabberBotSession::RunSession(void) {
   while(m_continueRunning) {
     time_t now = time(NULL);
     while (!m_upcomingQueue.empty() && (now > m_upcomingQueue.top().Next())) {
-      // std::cout << "Appending " << m_upcomingQueue.top().User() << " to the list of people who get messages now" << std::endl;
+      std::ostringstream message;
+      message << "Appending " << m_upcomingQueue.top().User() << " to the list of people who get messages now" << std::endl;
+      syslog(LOG_NOTICE, message.str().c_str());
       m_sendList.insert(m_upcomingQueue.top().User());
       m_upcomingQueue.pop();
     }
