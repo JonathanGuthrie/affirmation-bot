@@ -1,0 +1,40 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          affirmationsbot
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     true
+# Short-Description: Start/stop Jabber affirmations bot
+### END INIT INFO
+
+set -e
+
+case $1 in
+	start)
+		start-stop-daemon --start --exec "/usr/local/sbin/affirmations-bot"
+	;;
+	stop)
+                start-stop-daemon --stop --exec "/usr/local/sbin/affirmations-bot.bin"
+	;;
+	restart | force-reload)
+                start-stop-daemon --stop --exec "/usr/local/sbin/affirmations-bot.bin"
+		start-stop-daemon --start --exec "/usr/local/sbin/affirmations-bot"
+	;;
+	status)
+                if ps ax | grep -v grep | grep "affirmations-bot.bin" > /dev/null
+                then
+			echo "affirmations-bot is running."
+                        exit 0
+                else
+			echo "affirmations-bot is not running."
+                        exit 1
+		fi
+                echo "After status"
+	;;
+	*)
+		log_success_msg "Usage: /etc/init.d/affirmations-bot {start|stop|restart|force-reload|status}"
+		exit 1
+	;;
+esac
