@@ -141,6 +141,19 @@ int JabberBotSession::HandleMessageRequest(void *context, const MessageStanza &r
   return 0;
 }
 
+int JabberBotSession::HandlePingRequest(void *context, const IqStanza &request, class JabberSession *session) {
+  BareIqStanza pong;
+  JabberBotSession *bot = static_cast<JabberBotSession *>(context);
+
+  pong.Namespace("urn:xmpp:ping");
+  pong.Type("result");
+  pong.To(request.From());
+  pong.Id(request.Id());
+  bot->m_session->SendMessage(pong, false);
+  return 0;
+}
+
+
 void JabberBotSession::Subscribe(const std::string *from, MessageStanza::MessageTypes type, const std::string *id) {
   std::string account_id, resource;
   split_identifier(from, account_id, resource);

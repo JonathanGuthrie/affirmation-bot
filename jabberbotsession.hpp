@@ -82,6 +82,7 @@ private:
   JabberSession *m_session;
   static int HandlePresenceRequest(void *context, const PresenceStanza &request, class JabberSession *session);
   static int HandleMessageRequest(void *context, const MessageStanza &request, class JabberSession *session);
+  static int HandlePingRequest(void *context, const IqStanza &request, class JabberSession *session);
 
   void DefaultCommand(const std::string *from, MessageStanza::MessageTypes type, const std::string *id);
   void Subscribe(const std::string *from, MessageStanza::MessageTypes type, const std::string *id);

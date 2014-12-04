@@ -50,4 +50,7 @@ done) Configuration (paths to subscription database, affirmations, passwords, de
 25)  Stop busy waiting (use main loop to look for chances to sleep longer than
    1 second.)
 
-26)  Other stuff I think of
+26)  RFC-6120
+
+27)  Other stuff I think of
+
