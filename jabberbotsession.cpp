@@ -311,6 +311,7 @@ JabberBotSession::JabberBotSession(const std::string &host, unsigned short port,
   // SYZYGY
   m_session->Register(this, HandlePresenceRequest);
   m_session->Register(this, HandleMessageRequest);
+  m_session->Register(this, HandlePingRequest, "urn:xmpp:ping");
   JabberIqAuth login_stanza(userid, password, resource);
   const Stanza *response = m_session->SendMessage(login_stanza, true);
   std::ostringstream message;
