@@ -13,10 +13,10 @@
 # limitations under the License.
 
 CC=g++
-CXXFLAGS=-Wall -g `pkg-config libxml++-2.6 --cflags`
-LDFLAGS=-ldb_cxx -L/usr/local/lib -ljabber-bot
+CXXFLAGS=-Wall -g
+LDFLAGS=-ldb_cxx -L/usr/local/lib -lgloox -lboost_thread -lboost_system
 
-affirmations-bot: affirmations-bot.o jabberbotsession.o
+affirmations-bot: affirmations-bot.o jabberbot.o
 
 %.d: %.cpp
 	@set -e; rm -f $@; \
@@ -24,7 +24,7 @@ affirmations-bot: affirmations-bot.o jabberbotsession.o
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : Makefile ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
-SOURCES=affirmations-bot.cpp jabberbotsession.cpp
+SOURCES=affirmations-bot.cpp jabberbot.cpp
 
 include $(SOURCES:.cpp=.d)
 

@@ -1,0 +1,15 @@
+Create directory for files (/var/run/affirmations-bot) with the correct ownership
+
+Put the affirmations file there
+
+Create the run directory (/var/run/affirmations-bot) with the correct ownership
+
+Modify the shell script with the account name and password and stuff
+
+Put the shell script in /var/run/affirmations-bot
+
+Set up /etc/init.d/affirmations-bot
+
+Add the affirmations-bot to the run levels
+
+run it
