@@ -1,4 +1,3 @@
-This is a robot that uses the Jabber protocol to IM affirmations to subscribers
-every day.  It uses the C++ Jabber library that I have written.
+This is a robot that uses the Jabber protocol to IM affirmations to subscribers every day.  It uses the gloox C++ Jabber library.
 
-If you Jabber for IM (using, for example, Google Talk) and want to get an affirmation every day, add affirmations@jabber.brokersys.com to your contacts and send it a message of "subscribe".
+If you Jabber for IM (using, for example, Google Talk) and want to get an affirmation every day, add i.remind.you.three.times@gmail.com to your contacts and send it a message of "subscribe".
